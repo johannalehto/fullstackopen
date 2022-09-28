@@ -1,8 +1,42 @@
 import { useState } from 'react'
 
-const Button = ({handleClick, text}) => {
-  return (
-    <button onClick={handleClick}>{text}</button>
+const Button = ({ handleClick, text }) => {
+  return <button onClick={handleClick}>{text}</button>
+}
+
+
+const DailyAnecdote = ({ anecdote, points }) => {
+
+  const Container = {
+    height: "40px",
+  }
+
+  return(
+    <>    
+      <h1>Anecdote of the day</h1>
+      <div style={ Container }>
+        <p>{ anecdote }</p>
+      </div>
+      <p>has { points } votes</p>
+    </>
+  )
+}
+
+const MostPopularAnecdote = ({ anecdote, points }) => {
+  if (points > 0) {
+    return (
+      <>
+        <h1>Anecdote with most votes</h1>
+        <p>{ anecdote }</p>
+        <p>has { points } votes</p>
+      </>
+    )
+  }
+  return(
+    <>
+      <h1>Anecdote with most votes</h1>
+      <p>No votes yet</p>
+    </>
   )
 }
 
@@ -17,28 +51,41 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.'
   ]
    
-
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(new Uint8Array(7))
-
-
+ 
   const handleNext = () => {
-    let rnd = Math.floor(Math.random() * (anecdotes.length-1))
-    setSelected(rnd)
+    let nextAnecdote
+    do {
+      nextAnecdote = Math.floor(Math.random() * (anecdotes.length-1))
+    } while (nextAnecdote === selected)
+    setSelected(nextAnecdote)
+  }
+
+  const findMostVoted = () => {
+    const maxVotes = Math.max(...points)
+    return points.indexOf(maxVotes)
   }
 
   const handleVote = () => {
     const copy = [...points]
     copy[selected] += 1
     setPoints(copy)
+    
   }
+
+  //const mostVoted = findMostVoted()
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
+      <DailyAnecdote 
+        anecdote={anecdotes[selected]} 
+        points={points[selected]} />
       <Button handleClick={handleVote} text="vote"/>
       <Button handleClick={handleNext} text="next anecdote"/>
-      <p>has {points[selected]} votes</p>
+      <MostPopularAnecdote 
+        anecdote={anecdotes[findMostVoted()]} 
+        points={points[findMostVoted()]} />
     </div>
   )
 }
