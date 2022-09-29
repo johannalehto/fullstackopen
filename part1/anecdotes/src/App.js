@@ -4,20 +4,18 @@ const Button = ({ handleClick, text }) => {
   return <button onClick={handleClick}>{text}</button>
 }
 
-
 const DailyAnecdote = ({ anecdote, points }) => {
-
   const Container = {
-    height: "40px",
+    height: '40px'
   }
 
-  return(
-    <>    
+  return (
+    <>
       <h1>Anecdote of the day</h1>
-      <div style={ Container }>
-        <p>{ anecdote }</p>
+      <div style={Container}>
+        <p>{anecdote}</p>
       </div>
-      <p>has { points } votes</p>
+      <p>has {points} votes</p>
     </>
   )
 }
@@ -27,12 +25,12 @@ const MostPopularAnecdote = ({ anecdote, points }) => {
     return (
       <>
         <h1>Anecdote with most votes</h1>
-        <p>{ anecdote }</p>
-        <p>has { points } votes</p>
+        <p>{anecdote}</p>
+        <p>has {points} votes</p>
       </>
     )
   }
-  return(
+  return (
     <>
       <h1>Anecdote with most votes</h1>
       <p>No votes yet</p>
@@ -50,14 +48,14 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.'
   ]
-   
+
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(new Uint8Array(7))
- 
+
   const handleNext = () => {
     let nextAnecdote
     do {
-      nextAnecdote = Math.floor(Math.random() * (anecdotes.length-1))
+      nextAnecdote = Math.floor(Math.random() * (anecdotes.length - 1))
     } while (nextAnecdote === selected)
     setSelected(nextAnecdote)
   }
@@ -71,21 +69,17 @@ const App = () => {
     const copy = [...points]
     copy[selected] += 1
     setPoints(copy)
-    
   }
-
-  //const mostVoted = findMostVoted()
 
   return (
     <div>
-      <DailyAnecdote 
-        anecdote={anecdotes[selected]} 
-        points={points[selected]} />
-      <Button handleClick={handleVote} text="vote"/>
-      <Button handleClick={handleNext} text="next anecdote"/>
-      <MostPopularAnecdote 
-        anecdote={anecdotes[findMostVoted()]} 
-        points={points[findMostVoted()]} />
+      <DailyAnecdote anecdote={anecdotes[selected]} points={points[selected]} />
+      <Button handleClick={handleVote} text='vote' />
+      <Button handleClick={handleNext} text='next anecdote' />
+      <MostPopularAnecdote
+        anecdote={anecdotes[findMostVoted()]}
+        points={points[findMostVoted()]}
+      />
     </div>
   )
 }
