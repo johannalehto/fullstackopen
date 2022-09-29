@@ -23,7 +23,7 @@ const App = () => {
 
   return (
     <div>
-      <Course course={course} />
+      {/* <Course course={course} /> */}
     </div>
   )
 }
