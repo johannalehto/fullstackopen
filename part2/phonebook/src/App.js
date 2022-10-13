@@ -16,7 +16,13 @@ const App = () => {
     const newPerson = {
       name: newName
     }
-    setPersons(persons.concat(newPerson))
+  
+    const findPerson = persons.includes(persons.find((person) => person.name.toLowerCase() === newName.toLowerCase()))
+   
+    findPerson 
+    ? alert(`${newName} is already added to the phonebook`)
+    : setPersons(persons.concat(newPerson)) 
+   
     setNewName('')
   }
 
@@ -38,7 +44,6 @@ const App = () => {
      
     </div>
   )
-
 }
 
 export default App
