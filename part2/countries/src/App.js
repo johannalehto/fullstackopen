@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const Button = (props) => {
+
+  return <button onClick={props.handleClick} value={props.country.name.common}>show</button>
+}
 
 const CountryResults = (props) => {
 
@@ -11,11 +15,11 @@ const CountryResults = (props) => {
   } else if (props.filtered.length > 1){
     return (
       <><ul>{props.filtered.map(c => 
-        <li key={c.name.common}> {c.name.common}  </li>)}
+        <li key={c.name.common}> {c.name.common} <Button handleClick={props.handleClick} country={c}/> </li>)}
         </ul> 
       </>
     )
-  } else if (props.filtered.length === 1) {
+  } else if (props.filtered.length === 1)  {
     return (
     <CountryInfo 
               name={props.filtered[0].name.common} 
@@ -48,7 +52,6 @@ const App = () => {
   const [countries, setCountries] = useState([])
   const [newFilter, setNewFilter] = useState("")
 
-
   useEffect( () => {
     axios
       .get('https://restcountries.com/v3.1/all')
@@ -62,12 +65,17 @@ const App = () => {
     setNewFilter(newInput)
   }
 
+  const handleClick = (event) => {
+    const country = event.target.value
+    setNewFilter(country)
+  }
+
   const filtered = countries.filter(country => country.name.common.toLowerCase().includes(newFilter.toLowerCase()))
  
   return (
     <>
       find countries <input onChange={handleChange} value={newFilter}/>
-      <CountryResults filter={newFilter} filtered={filtered}/>
+      <CountryResults filter={newFilter} filtered={filtered} handleClick={handleClick}/>
     </>
   )
 }
