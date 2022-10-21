@@ -1,51 +1,75 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Button = (props) => {
 
-  return <button onClick={props.handleClick} value={props.country.name.common}>show</button>
+const Button = ({handleClick, country}) => {
+
+  return <button onClick={handleClick} value={country.name.common}>show</button>
 }
 
-const CountryResults = (props) => {
+const CountryResults = ({filter, filtered, handleClick}) => {
 
-  if (props.filter === "") {
+  if (filter === "") {
     return <p></p>
-  } else if (props.filtered.length > 10) {
+  } else if (filtered.length > 10) {
     return(<p>Too many matches, specify another filter</p>)
-  } else if (props.filtered.length > 1){
+  } else if (filtered.length > 1){
     return (
-      <><ul>{props.filtered.map(c => 
-        <li key={c.name.common}> {c.name.common} <Button handleClick={props.handleClick} country={c}/> </li>)}
+      <><ul>{filtered.map(c => 
+        <li key={c.name.common}> {c.name.common} <Button handleClick={handleClick} country={c}/> </li>)}
         </ul> 
       </>
     )
-  } else if (props.filtered.length === 1)  {
+  } else if (filtered.length === 1)  {
     return (
-    <CountryInfo 
-              name={props.filtered[0].name.common} 
-              capital={props.filtered[0].capital} 
-              area={props.filtered[0].area} 
-              languages={props.filtered[0].languages} 
-              flag={props.filtered[0].flags.png}
-    />)
+    <CountryInfo country={filtered[0]} />)
   }
 }
     
-const CountryInfo = (props) => {
+const CountryInfo = ({ country }) => {
+
+  const [weather, setWeather] = useState()
+
+  useEffect(() => {
+    const api_key = process.env.REACT_APP_API_KEY
+    const lat_lng = country.latlng
+    const weather_url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat_lng[0]}&lon=${lat_lng[1]}&appid=${api_key}`
+      axios
+        .get(weather_url)
+        .then(response => {
+          setWeather(response.data)
+        })
+    }, [country.latlng])
+
+  if (!weather) { 
+    return null 
+  }
+
   return (
     <>
-      <h1>{props.name}</h1>
-      <p>capital {props.capital}</p>
-      <p>area {props.area}</p>
+      <h1>{country.name.common}</h1>
+      <p>capital {country.capital}</p>
+      <p>area {country.area}</p>
       <h4>languages: </h4>
       <ul>
-        {Object.values(props.languages).map(item => <li key={item}> {item}</li>)}
+        {Object.values(country.languages).map(item => <li key={item}> {item}</li>)}
       </ul>
-      <img alt="flag" src={props.flag}></img>
+      <img alt="flag" width="180vw" src={country.flags.png}></img>
+      <CountryWeather country={country} weather={weather} />
     </>
   )
 }
 
+const CountryWeather = ({country, weather}) => {
+  return (
+    <>
+      <h2>Weather in {country.capital}</h2>
+      <p>temperature {(weather.main.temp - 273.15).toFixed(1)} Celcius</p>
+      <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="weather icon"></img>
+      <p>wind {weather.wind.speed} m/s</p>
+    </>
+  )
+}
 
 const App = () => {
 
@@ -59,7 +83,7 @@ const App = () => {
         setCountries(response.data)
       })
   }, [])
-
+  
   const handleChange = (event) => {
     const newInput = event.target.value
     setNewFilter(newInput)
@@ -79,5 +103,6 @@ const App = () => {
     </>
   )
 }
+
 
 export default App
