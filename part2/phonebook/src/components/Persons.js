@@ -1,8 +1,8 @@
-const Persons = (props) => {
+const Persons = ({displayPersons, handleDelete}) => {
 
     return(
             <ul>
-                {props.viewPersons.map(p => <li  key={p.name}>{p.name} {p.number}</li>)}
+                {displayPersons.map(p => <li  key={p.name}>{p.name} {p.number} <button onClick={handleDelete} value={p.id}>delete</button></li>)}
             </ul>
     )
 }
