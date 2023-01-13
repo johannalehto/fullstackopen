@@ -3,7 +3,19 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons-service'
+import './index.css'
 
+const Notification = ({ content }) => {
+  if (content === null) {
+    return null
+  }
+
+  return (
+    <div className="notification">
+      {content}
+    </div>
+  )
+}
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,6 +23,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [notificationContent, setNotificationContent] = useState(null)
+
 
   useEffect(() => {
     personService
@@ -58,6 +72,10 @@ const App = () => {
             setPersons(persons.map(p => p.name === newName ? returnedPerson : p))
             setNewName('')
             setNewNumber('')
+            setNotificationContent(`Updated ${returnedPerson.name}`)
+            setTimeout(() => {
+              setNotificationContent(null);
+            }, 3000);
           })
       }
     } else {
@@ -67,6 +85,11 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+          setNotificationContent(`Added ${returnedPerson.name}`)
+          setTimeout(() => {
+            setNotificationContent(null);
+          }, 3000);
+
         })
     }
   }
@@ -81,12 +104,17 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(p => p.id !== personId))
         })
+        setNotificationContent(`Removed ${person.name}`)
+        setTimeout(() => {
+          setNotificationContent(null);
+        }, 3000);
     }
   }
 
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification content={notificationContent} />
       <Filter handleFilter={handleFilter} newFilter={newFilter} />
       <h2>Add a new</h2>
       <PersonForm
