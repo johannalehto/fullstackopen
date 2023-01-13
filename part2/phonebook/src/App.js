@@ -45,17 +45,30 @@ const App = () => {
       number: newNumber
     }
 
-    const findPerson = persons.includes(persons.find(p => p.name.toLowerCase() === newName.toLowerCase()))
+    const personTemp = persons.find(p => p.name.toLowerCase() === newName.toLowerCase())
+    const findPerson = persons.includes(personTemp)
 
-    findPerson
-      ? alert(`${newName} is already added to the phonebook`)
-      : personService
+    if (findPerson) {
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with this new one?`)) {
+
+        const updatedPerson = { ...personTemp, number: newPerson.number }
+        personService
+          .update(personTemp.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.name === newName ? returnedPerson : p))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+    } else {
+      personService
         .create(newPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
         })
+    }
   }
 
   const handleDelete = (event) => {
